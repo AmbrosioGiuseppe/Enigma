@@ -1,0 +1,5 @@
+be/v_env/*
+be/.env
+be/enigma/db.sqlite3
+be/enigma/accounts/__pycache__/*
+be/enigma/accounts/migrations/*
