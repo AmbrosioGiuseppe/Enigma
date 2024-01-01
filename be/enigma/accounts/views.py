@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -7,8 +8,9 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import authenticate
 from django.db import IntegrityError
-from .models import User
+from .models import User, EmailVerificationToken, AccountsEmailSetting
 from .serializers import UserSerializer
+from .functions import sendVerificationEmail
 
 """
 @api_view(['GET'])
@@ -19,9 +21,60 @@ def test(request):
     return Response(person)
 """
 
+## Settings
+accountsEmailSetting = AccountsEmailSetting.load()
+
 ##################
 ###### GET #######
 ##################
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def verifyRegistrationEmail(request, token):
+    try:
+        # Look for the verification token
+        verification_token = EmailVerificationToken.objects.get(token=token)
+
+        # Check if the token is still valid (e.g. not expired)
+        if verification_token.created_at < timezone.now() - timezone.timedelta(hours=accountsEmailSetting.emailLinkExpiration): # Hours of validity set via DB
+            data = {
+                "status": "error",
+                "errorCode": "ERR_008",
+                "message": "The request has expired."
+            }
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verify the user's email
+        user = verification_token.user
+        user.is_active = True
+        user.save()
+
+        # I delete the token after use to avoid reuse
+        verification_token.delete()
+
+        # Reindirizza a una pagina di conferma o restituisci una risposta
+        data = {
+            "status": "success",
+            "errorCode": "NO_ERR",
+            "message": "Email verified with success"
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+    except EmailVerificationToken.DoesNotExist:
+        data = {
+            "status": "error",
+            "errorCode": "ERR_005",
+            "message": "The requested resource was not found in the backend."
+        }
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        data = {
+            "status": "error",
+            "errorCode": "ERR_01",
+            "message": f"A generic error occurred in the backend. ERROR: {str(e)}"
+        }
+        return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 ##################
 ###### POST ######
@@ -76,6 +129,7 @@ def registration(request):
             user = serializer.save()
             # After this line, the user should be saved successfully.
             # Sending email for successful registration
+            sendVerificationEmail(user.id)
             return Response({
                 "status": "success",
                 "errorCode": "NO_ERR",

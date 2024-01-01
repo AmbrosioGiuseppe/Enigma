@@ -19,3 +19,9 @@ class EmailVerificationTokenAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'token', 'created_at']
 
 admin.site.register(EmailVerificationToken,EmailVerificationTokenAdmin)
+
+class AccountsEmailSettingAdmin(admin.ModelAdmin):
+    model = AccountsEmailSetting
+    list_display = ['id', 'emailLinkExpiration']
+
+admin.site.register(AccountsEmailSetting,AccountsEmailSettingAdmin)

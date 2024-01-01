@@ -1,0 +1,47 @@
+{
+    "db_error": {
+        "code": "ERR_DB",
+        "message": "Generic Error DB",
+        "description": "Error writing database."
+    },
+    "error": {
+        "code": "ERR_001",
+        "message": "Generic Error",
+        "description": "A generic error occurred in the backend."
+    },
+    "validation_error": {
+        "code": "ERR_002",
+        "message": "Validation Error",
+        "description": "The data sent is invalid or missing."
+    },
+    "authentication_error": {
+        "code": "ERR_003",
+        "message": "Authentication Error",
+        "description": "Authentication failed or is required to access the resource."
+    },
+    "authorization_error": {
+        "code": "ERR_004",
+        "message": "Authorization Error",
+        "description": "You do not have the necessary permissions to access this resource."
+    },
+    "not_found_error": {
+        "code": "ERR_005",
+        "message": "Resource Not Found",
+        "description": "The requested resource was not found in the backend."
+    },
+    "user_not_found": {
+        "code": "ERR_006",
+        "message": "User Not Found",
+        "description": "The user entered does not exist."
+    },
+    "invalid_request": {
+        "code": "ERR_007",
+        "message": "Invalid request",
+        "description": "The request sent is invalid."
+    },
+    "request_expired": {
+        "code": "ERR_008",
+        "message": "Request expired",
+        "description": "The request has expired."
+    }
+}

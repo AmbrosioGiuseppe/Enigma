@@ -3,3 +3,7 @@ be/.env
 be/enigma/db.sqlite3
 be/enigma/accounts/__pycache__/*
 be/enigma/accounts/migrations/*
+be/enigma/logs/__pycache__/*
+be/enigma/logs/migrations/*
+be/enigma/settings/__pycache__/*
+be/enigma/settings/migrations/*

@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 phone_regex = RegexValidator(
     regex=r'^\+?1?\d{9,15}$',
@@ -33,3 +34,22 @@ class EmailVerificationToken(models.Model):
     
     def __str__(self):
         return f"User: {self.user} - Token: {self.token}"
+
+
+class AccountsEmailSetting(models.Model):
+    #The expiration is calculated in hours, example: 48 means 48 hours before the link to validate the newly registered account expires
+    emailLinkExpiration = models.IntegerField(blank=True,null=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.pk and AccountsEmailSetting.objects.exists():
+            raise ValidationError('A general configuration already exists.')
+        return super(AccountsEmailSetting, self).save(*args, **kwargs)
+    
+    @classmethod
+    def load(cls):
+        obj = cls.objects.order_by('-id').first()
+        return obj
+    
+    def __str__(self):
+        return f"Email Link Expiration: {self.emailLinkExpiration}"
+    

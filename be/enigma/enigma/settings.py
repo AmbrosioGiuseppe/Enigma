@@ -41,9 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     ##APP
     'accounts',
-    
+    'settings',
+    'logs',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +64,9 @@ ROOT_URLCONF = 'enigma.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,3 +136,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth model
 AUTH_USER_MODEL = 'accounts.User'
+
+# Site URL
+SITE_URL = os.getenv("URL_DOMAIN")
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv("SMTP_SERVER")
+EMAIL_PORT = os.getenv("SMTP_PORT")
+EMAIL_USE_TLS = os.getenv("SMTP_TLS")  # True / False
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
