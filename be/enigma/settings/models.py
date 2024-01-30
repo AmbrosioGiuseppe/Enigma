@@ -8,8 +8,10 @@ LANGUAGE = [
     ('ITALIAN', 'ITALIAN'),
 ]
 
+#NOTE: If you try to create a new record in the AllSetting table with a record already existing, it will give an error.
 class AllSetting(models.Model):
-    language = models.CharField(max_length=250,choices=LANGUAGE)
+    language    = models.CharField(max_length=250,choices=LANGUAGE)
+    urlDomain   = models.CharField(max_length=250)
     
     def save(self, *args, **kwargs):
         if not self.pk and AllSetting.objects.exists():
@@ -18,9 +20,12 @@ class AllSetting(models.Model):
     
     @classmethod
     def load(cls):
-        obj = cls.objects.order_by('-id').first()
-        return obj
+        try:
+            obj = cls.objects.order_by('-id').first()
+            return obj
+        except Exception as e:
+            # Log dell'errore o gestione specifica
+            return None
     
     def __str__(self):
         return f"Language: {self.language}"
-    
